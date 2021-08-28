@@ -110,3 +110,4 @@ Received Import Request.
 Start importing Assets/Oculus/VR/Scripts/Util/OVRInputModule.cs using Guid(8f1a9a1d119a5944aacfb87d1ec283a2) Importer(815301076,1909f56bfc062723c751e8b465ee728b)  -> (artifact id: 'dfbf7266b8b0c0091f2360051a23de64') in 0.007664 seconds 
   Import took 0.010929 seconds .
 
+AssetImportWorkerClient::OnTransportError - code=2 error=End of file
