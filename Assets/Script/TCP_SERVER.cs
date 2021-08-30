@@ -79,6 +79,9 @@ public class TCP_SERVER : MonoBehaviour
                 case 2:
                     ReadFunctionB();
                     break;
+                case 3:
+                    ReadFunctionC();
+                    break;
             }
         }
 
@@ -111,8 +114,7 @@ public class TCP_SERVER : MonoBehaviour
 
     void ReadFunctionA()
     {
-        DataStructs.partialTrackingStruct readData = default;
-        byte[] dataBytes = new byte[Marshal.SizeOf(readData)];
+        byte[] dataBytes = new byte[Marshal.SizeOf<DataStructs.partialTrackingStruct>()];
         clientStream.Read(dataBytes, 0, dataBytes.Length);
         DataStructs.partialTrackingData = DataStructs.ByteToStruct<DataStructs.partialTrackingStruct>(dataBytes);
         
@@ -179,5 +181,19 @@ public class TCP_SERVER : MonoBehaviour
         clientStream.Flush();
     }
     
+    
+    void ReadFunctionC()
+    {
+        byte[] dataBytes = new byte[Marshal.SizeOf<DataStructs.VRControllerStruct>()];
+        clientStream.Read(dataBytes, 0, dataBytes.Length);
+        DataStructs.vrControllerData = DataStructs.ByteToStruct<DataStructs.VRControllerStruct>(dataBytes);
+        
+        InputSystem.SetControllerData(DataStructs.vrControllerData);
+        
+        counter += 1;
+        Debug.Log("Read VRController Data");
+
+        clientStream.Flush();
+    }
     
 }
