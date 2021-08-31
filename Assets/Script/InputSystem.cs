@@ -70,13 +70,13 @@ public class InputSystem : MonoBehaviour
                 break;
             case ButtonType.ButtonA:
                 if (isLandscapeMode)
-                    return rightHandControllerData.isButton1Pressed;
+                    return rightHandControllerData.isButton2Pressed;
                 else
                     return false;
                 break;
             case ButtonType.ButtonB:
                 if (isLandscapeMode)
-                    return rightHandControllerData.isButton2Pressed;
+                    return rightHandControllerData.isButton1Pressed;
                 else
                     return false;
                 break;

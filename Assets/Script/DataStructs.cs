@@ -38,6 +38,14 @@ public class DataStructs
     }
 
     public static VRControllerStruct vrControllerData = default;
+    
+    public struct VRControllersStruct
+    {
+        public VRControllerStruct rightController, leftController;
+    }
+    
+    public static VRControllersStruct vrControllersData = default;
+    
     public static byte[] StructToBytes(object obj)
     {
         //구조체 사이즈

@@ -83,8 +83,8 @@ public class BonePositionTest : MonoBehaviour
         }
         else
         {
-            text.text = "Right °ËÁö : " + rightHandIndexTip.position.ToString();
-            text.text += "\nRight ¾öÁö : " + rightHandThumbTip.position.ToString();
+            text.text = "Right ê²€ì§€ : " + rightHandIndexTip.position.ToString();
+            text.text += "\nRight ì—„ì§€ : " + rightHandThumbTip.position.ToString();
 
             Vector3 canvasVector = rightHandThumbTip.position - rightHandIndexTip.position;
             canvasTransform.position = rightHandIndexTip.position + (canvasVector / 2);

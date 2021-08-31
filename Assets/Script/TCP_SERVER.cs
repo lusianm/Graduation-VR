@@ -29,6 +29,8 @@ public class TCP_SERVER : MonoBehaviour
     int prevCounter = 0;
     int currentFPS = 0;
     [SerializeField] ByteToRawTexture byteToRawTexture;
+    private Thread acceptThread, readClientThread;
+    
     // Start is called before the first frame update
     void Start()
     {
@@ -38,8 +40,9 @@ public class TCP_SERVER : MonoBehaviour
         serverSocket.Start();
         Debug.Log("Server Started");
         counter = 0;
-        Thread acceptThread = new Thread(AcceptClient);
+        acceptThread = new Thread(AcceptClient);
         acceptThread.Start();
+        readClientThread = new Thread(ReadDataFromClient);
         IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
         foreach (var ip in host.AddressList)
         {
@@ -55,34 +58,26 @@ public class TCP_SERVER : MonoBehaviour
         if (!clientSocket.Connected)
         {
             debugText2.text = "Client Disconnected";
+            IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if(ip.AddressFamily == AddressFamily.InterNetwork)
+                    if (debugText.text.CompareTo("Client Connected") != 0)
+                        debugText.text = "wating" + "\nIP is : " + ip.ToString();
+            }
+            acceptThread.Start();
             return;
         }
+        else if (!readClientThread.IsAlive)
+        {
+            readClientThread.Start();
+        }
+        
+        
         if (isConnected)
         {
             debugText.text = "Client Connected";
             isConnected = false;
-        }
-        if (clientSocket != null && clientSocket.Connected && clientStream.DataAvailable)
-        {
-            byte[] functionTypeBytes = BitConverter.GetBytes((int)0);
-            clientStream.Read(functionTypeBytes, 0, functionTypeBytes.Length);
-            Array.Reverse(functionTypeBytes);
-            int functionType = BitConverter.ToInt32(functionTypeBytes, 0);
-                
-            debugText.text = "Read Function Type : " + functionType.ToString();
-                
-            switch (functionType)
-            {
-                case 1:
-                    ReadFunctionA();
-                    break;
-                case 2:
-                    ReadFunctionB();
-                    break;
-                case 3:
-                    ReadFunctionC();
-                    break;
-            }
         }
 
         if (fpsCounter <= 0)
@@ -111,6 +106,36 @@ public class TCP_SERVER : MonoBehaviour
             isConnected = true;
         }
     }
+
+    void ReadDataFromClient()
+    {
+        while (clientSocket.Connected)
+        {
+            if (clientSocket != null && clientSocket.Connected && clientStream.DataAvailable)
+            {
+                byte[] functionTypeBytes = BitConverter.GetBytes((int) 0);
+                clientStream.Read(functionTypeBytes, 0, functionTypeBytes.Length);
+                Array.Reverse(functionTypeBytes);
+                int functionType = BitConverter.ToInt32(functionTypeBytes, 0);
+
+                debugText.text = "Read Function Type : " + functionType.ToString();
+
+                switch (functionType)
+                {
+                    case 1:
+                        ReadFunctionA();
+                        break;
+                    case 2:
+                        ReadFunctionB();
+                        break;
+                    case 3:
+                        ReadFunctionC();
+                        break;
+                }
+            }
+        }
+    }
+    
 
     void ReadFunctionA()
     {
@@ -184,11 +209,12 @@ public class TCP_SERVER : MonoBehaviour
     
     void ReadFunctionC()
     {
-        byte[] dataBytes = new byte[Marshal.SizeOf<DataStructs.VRControllerStruct>()];
+        byte[] dataBytes = new byte[Marshal.SizeOf<DataStructs.VRControllersStruct>()];
         clientStream.Read(dataBytes, 0, dataBytes.Length);
-        DataStructs.vrControllerData = DataStructs.ByteToStruct<DataStructs.VRControllerStruct>(dataBytes);
+        DataStructs.vrControllersData = DataStructs.ByteToStruct<DataStructs.VRControllersStruct>(dataBytes);
         
-        InputSystem.SetControllerData(DataStructs.vrControllerData);
+        InputSystem.SetControllerData(DataStructs.vrControllersData.rightController);
+        InputSystem.SetControllerData(DataStructs.vrControllersData.leftController);
         
         counter += 1;
         Debug.Log("Read VRController Data");
