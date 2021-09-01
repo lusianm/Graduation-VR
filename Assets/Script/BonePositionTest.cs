@@ -63,34 +63,44 @@ public class BonePositionTest : MonoBehaviour
             text.text = "Right : " + rightHandThumb3.position.ToString();
             text.text += "\nLeft : " + leftHandThumb3.position.ToString();
 
-            if (DataStructs.partialTrackingData.isRight)
-            {
-                canvasTransform.position = rightHandThumb3.position;
-            }
-            else
-            {
-                canvasTransform.position = leftHandThumb3.position;
-            }
 
-            canvasTransform.rotation = DataStructs.partialTrackingData.trackedRotation;
             
             Vector3 canvasVector = rightHandThumbTip.position - rightHandIndexTip.position;
             //canvasTransform.position = rightHandIndexTip.position + (canvasVector / 2);
             //canvasTransform.LookAt(Camera.main.transform);
             //canvasTransform.Rotate(canvasBaseRotation);
-            canvasTransform.sizeDelta = new Vector2(DataStructs.partialTrackingData.cameraResolution.x / 5000,
-                DataStructs.partialTrackingData.cameraResolution.y / 5000);
+            canvasTransform.sizeDelta = new Vector2(DataStructs.partialTrackingData.cameraResolution.y / 4000,
+                DataStructs.partialTrackingData.cameraResolution.x / 4000);
+            
+            if (DataStructs.partialTrackingData.isRight)
+            {
+                canvasTransform.pivot = new Vector2(0f, 0f);
+                canvasTransform.position = rightHandThumb3.position;
+            }
+            else
+            {
+                canvasTransform.pivot = new Vector2(1f, 0f);
+                canvasTransform.position = leftHandThumb3.position;
+            }
+            
+            canvasTransform.rotation = DataStructs.partialTrackingData.trackedRotation;
+            canvasTransform.Rotate(0f, -195f, 180f, Space.Self);
+            canvasTransform.Rotate(90f, 180f, -90f, Space.World);
         }
         else
         {
+            canvasTransform.pivot = new Vector2(0.5f, 0f);
             text.text = "Right 검지 : " + rightHandIndexTip.position.ToString();
             text.text += "\nRight 엄지 : " + rightHandThumbTip.position.ToString();
 
             Vector3 canvasVector = rightHandThumbTip.position - rightHandIndexTip.position;
             canvasTransform.position = rightHandIndexTip.position + (canvasVector / 2);
+            
             canvasTransform.LookAt(Camera.main.transform);
-            canvasTransform.Rotate(canvasBaseRotation);
+            //canvasTransform.Rotate(0f, 0f, -90f, Space.Self);
+            //canvasTransform.Rotate(canvasBaseRotation);
             canvasTransform.sizeDelta = new Vector2(canvasVector.magnitude, canvasVector.magnitude * 1 / 1);
+            
             
         }
         

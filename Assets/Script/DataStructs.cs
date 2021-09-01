@@ -17,6 +17,7 @@ public class DataStructs
     }
 
     public static partialTrackingStruct partialTrackingData = default;
+    public static byte[] partialTrackingImageData = default;
 
     public struct mirroringStruct
     {

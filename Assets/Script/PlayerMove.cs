@@ -26,7 +26,8 @@ public class PlayerMove : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        joystickAxis[0] = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
+        //joystickAxis[0] = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
+        joystickAxis[0] = InputSystem.GetAxis2D(ControllerType.RightController);
     }
 
     private void FixedUpdate()

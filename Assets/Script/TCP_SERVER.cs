@@ -24,17 +24,19 @@ public class TCP_SERVER : MonoBehaviour
     bool isConnected = false;
     bool isDataReaded = false;
     string readData;
-    byte[] bytes;
     float fpsCounter = 1;
     int prevCounter = 0;
     int currentFPS = 0;
     [SerializeField] ByteToRawTexture byteToRawTexture;
     private Thread acceptThread, readClientThread;
+
+    private int currentFunctionType;
+    private bool currentFunctionUpdated;
+    
     
     // Start is called before the first frame update
     void Start()
     {
-        bytes = new byte[200000];
         serverSocket = new TcpListener(port);
         clientSocket = default(TcpClient);
         serverSocket.Start();
@@ -43,6 +45,7 @@ public class TCP_SERVER : MonoBehaviour
         acceptThread = new Thread(AcceptClient);
         acceptThread.Start();
         readClientThread = new Thread(ReadDataFromClient);
+        readClientThread.Start();
         IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
         foreach (var ip in host.AddressList)
         {
@@ -50,13 +53,20 @@ public class TCP_SERVER : MonoBehaviour
                 if (debugText.text.CompareTo("Client Connected") != 0)
                     debugText.text = "wating" + "\nIP is : " + ip.ToString();
         }
+
+        currentFunctionType = 0;
+        currentFunctionUpdated = false;
     }
 
     // Update is called once per frame
     void Update()
     {
+        if (clientSocket == null)
+            return;
+        
         if (!clientSocket.Connected)
         {
+            /*
             debugText2.text = "Client Disconnected";
             IPHostEntry host = Dns.GetHostEntry(Dns.GetHostName());
             foreach (var ip in host.AddressList)
@@ -66,12 +76,39 @@ public class TCP_SERVER : MonoBehaviour
                         debugText.text = "wating" + "\nIP is : " + ip.ToString();
             }
             acceptThread.Start();
+            */
             return;
         }
-        else if (!readClientThread.IsAlive)
+
+        debugText.text = "Read Function Type : " + currentFunctionType.ToString();
+        switch (currentFunctionType)
         {
-            readClientThread.Start();
+            case 1:
+                debugText.text += "\npartialTrackingData"
+                                  + "\nbyte Len : " + DataStructs.partialTrackingData.bytesLen.ToString()
+                                  + "\nisTrack : " + DataStructs.partialTrackingData.isTrack.ToString()
+                                  + "\nisRight : " + DataStructs.partialTrackingData.isRight.ToString()
+                                  + "\ncamera Resholution : " + DataStructs.partialTrackingData.cameraResolution.ToString()
+                                  + "\ntracked Position : " + DataStructs.partialTrackingData.trackedPosition.ToString()
+                                  + "\ntracked Rotation : " + DataStructs.partialTrackingData.trackedRotation.ToString();
+                if (currentFunctionUpdated)
+                {
+                    byteToRawTexture.LoadPNG(DataStructs.partialTrackingImageData);
+                    boneTest.SetTrackingData();
+                    currentFunctionUpdated = false;
+                }
+                break;
+            case 2:
+                break;
+            case 3:
+                if (currentFunctionUpdated)
+                {
+                    
+                    currentFunctionUpdated = false;
+                }
+                break;
         }
+        
         
         
         if (isConnected)
@@ -109,6 +146,38 @@ public class TCP_SERVER : MonoBehaviour
 
     void ReadDataFromClient()
     {
+        while (true)
+        {
+            if (clientSocket == null || clientStream == null)
+                continue;
+
+            if (clientStream.DataAvailable)
+            {
+                byte[] functionTypeBytes = BitConverter.GetBytes((int) 0);
+                clientStream.Read(functionTypeBytes, 0, functionTypeBytes.Length);
+                Array.Reverse(functionTypeBytes);
+                currentFunctionType = BitConverter.ToInt32(functionTypeBytes, 0);
+
+                switch (currentFunctionType)
+                {
+                    case 1:
+                        ReadFunctionA();
+                        break;
+                    case 2:
+                        ReadFunctionB();
+                        break;
+                    case 3:
+                        ReadFunctionC();
+                        break;
+                }
+
+            }
+            
+            
+        }
+        if (clientSocket == null)
+            return;
+        
         while (clientSocket.Connected)
         {
             if (clientSocket != null && clientSocket.Connected && clientStream.DataAvailable)
@@ -149,21 +218,15 @@ public class TCP_SERVER : MonoBehaviour
         while (readDataLength < DataStructs.partialTrackingData.bytesLen)
         {
             readDataLength += clientStream.Read(textureRawData, readDataLength, DataStructs.partialTrackingData.bytesLen - readDataLength);
-            //debugText.text = "Read Texture Length : " + readData.bytesLen + "\nRead Image Counter : " + counter + "\nRead Data Length : " + readData;
         }
+
+        DataStructs.partialTrackingImageData = textureRawData;
+        
         counter += 1;
         Debug.Log("Read Texture Length : " + readDataLength.ToString());
-        byteToRawTexture.LoadPNG(textureRawData);
-        boneTest.SetTrackingData();
-        debugText.text += "\n\npartialTrackingData"
-                          + "\n" + DataStructs.partialTrackingData.bytesLen.ToString()
-                          + "\n" + DataStructs.partialTrackingData.isTrack.ToString()
-                          + "\n" + DataStructs.partialTrackingData.isRight.ToString()
-                          + "\n" + DataStructs.partialTrackingData.cameraResolution.ToString()
-                          + "\n" + DataStructs.partialTrackingData.trackedPosition.ToString()
-                          + "\n" + DataStructs.partialTrackingData.trackedRotation.ToString();
         
         clientStream.Flush();
+        currentFunctionUpdated = true;
     }
 
     void ReadFunctionB()
