@@ -7,6 +7,8 @@ public class FingerTipUIManager : MonoBehaviour
 
     [SerializeField] private GameObject fingerTipCanvas;
     private RectTransform fingerTipCanvasRectTransform;
+    [SerializeField] private Transform fingerTipHandAnchor;
+
     [SerializeField] private RectTransform mainPanelPosition, subPanelPosition, vanishingPanelPosition;
     [SerializeField] private FingerTipUIPanel rootPanel;
 
@@ -86,9 +88,9 @@ public class FingerTipUIManager : MonoBehaviour
     void SetCanvasPosition()
     {
         //Canvas Position & Rotation
-        fingerTipCanvas.transform.position = fingerTipUIHand.PointerPose.position;
+        fingerTipCanvas.transform.position = fingerTipHandAnchor.position;
         fingerTipCanvas.transform.LookAt(mainCamera.transform);
-        fingerTipCanvas.transform.Translate(fingerTipCanvas.transform.right * fingerTipCanvasRectTransform.sizeDelta.x, Space.World);
+        fingerTipCanvas.transform.Translate(-1 * fingerTipCanvas.transform.right * fingerTipCanvasRectTransform.sizeDelta.x, Space.World);
         fingerTipCanvas.transform.LookAt(mainCamera.transform);
         fingerTipCanvas.transform.Rotate(0f, 180f, 0f, Space.Self);
     }
