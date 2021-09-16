@@ -33,7 +33,4 @@ public class FingerTipUIButton : MonoBehaviour
             childFingerTipUIPanel.gameObject.SetActive(true);
         return childFingerTipUIPanel;
     }
-    
-    
-    
 }

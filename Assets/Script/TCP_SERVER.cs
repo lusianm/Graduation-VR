@@ -99,11 +99,19 @@ public class TCP_SERVER : MonoBehaviour
                 }
                 break;
             case 2:
+                debugText.text += "\nmirroring Data"
+                                  + "\nbyte Len : " + DataStructs.mirroringData.bytesLen.ToString()
+                                  + "\nscreen width : " + DataStructs.mirroringData.screenWidth.ToString()
+                                  + "\nscreen height : " + DataStructs.mirroringData.screenHeight.ToString();
+                if (currentFunctionUpdated)
+                {
+                    byteToRawTexture.LoadPNG(DataStructs.mirroringImageData);
+                    currentFunctionUpdated = false;
+                }
                 break;
             case 3:
                 if (currentFunctionUpdated)
                 {
-                    
                     currentFunctionUpdated = false;
                 }
                 break;
@@ -144,6 +152,32 @@ public class TCP_SERVER : MonoBehaviour
         }
     }
 
+    public void ChangeMobileMode(int changeFunctionType)
+    {
+        if (changeFunctionType == currentFunctionType)
+            return;
+
+        if (clientStream == null)
+            return;
+
+        byte[] functionTypeBytes = BitConverter.GetBytes(changeFunctionType);
+        clientStream.Write(functionTypeBytes, 0, functionTypeBytes.Length);
+        currentFunctionType = changeFunctionType;
+    }
+    
+    public void ChangeMobileMode(FunctionTypes changeFunctionType)
+    {
+        if ((int) changeFunctionType == currentFunctionType)
+            return;
+
+        byte[] functionTypeBytes = BitConverter.GetBytes((int) changeFunctionType);
+        clientStream.Write(functionTypeBytes, 0, functionTypeBytes.Length);
+        currentFunctionType = (int) changeFunctionType;
+    }
+
+
+    #region ReadDataFromMobile
+
     void ReadDataFromClient()
     {
         while (true)
@@ -171,37 +205,8 @@ public class TCP_SERVER : MonoBehaviour
                         break;
                 }
 
-            }
+            }           
             
-            
-        }
-        if (clientSocket == null)
-            return;
-        
-        while (clientSocket.Connected)
-        {
-            if (clientSocket != null && clientSocket.Connected && clientStream.DataAvailable)
-            {
-                byte[] functionTypeBytes = BitConverter.GetBytes((int) 0);
-                clientStream.Read(functionTypeBytes, 0, functionTypeBytes.Length);
-                Array.Reverse(functionTypeBytes);
-                int functionType = BitConverter.ToInt32(functionTypeBytes, 0);
-
-                debugText.text = "Read Function Type : " + functionType.ToString();
-
-                switch (functionType)
-                {
-                    case 1:
-                        ReadFunctionA();
-                        break;
-                    case 2:
-                        ReadFunctionB();
-                        break;
-                    case 3:
-                        ReadFunctionC();
-                        break;
-                }
-            }
         }
     }
     
@@ -234,39 +239,31 @@ public class TCP_SERVER : MonoBehaviour
         byte[] lengthBytes = BitConverter.GetBytes((int)0);
         clientStream.Read(lengthBytes, 0, lengthBytes.Length);
         Array.Reverse(lengthBytes);
-        int textureLength = BitConverter.ToInt32(lengthBytes, 0);
         
-        debugText.text += "\nRead Length = : " + textureLength.ToString() + "  Byte Data : " + BitConverter.ToString(lengthBytes);
+        DataStructs.mirroringData.bytesLen = BitConverter.ToInt32(lengthBytes, 0);
+
+        clientStream.Read(lengthBytes, 0, lengthBytes.Length);
+        Array.Reverse(lengthBytes);
+        DataStructs.mirroringData.screenWidth = BitConverter.ToInt32(lengthBytes, 0);
         
         clientStream.Read(lengthBytes, 0, lengthBytes.Length);
         Array.Reverse(lengthBytes);
-        int screenWidth = BitConverter.ToInt32(lengthBytes, 0);
-        debugText.text += "\nRead width = : " + screenWidth.ToString() + "  Byte Data : " + BitConverter.ToString(lengthBytes);
-        
-        clientStream.Read(lengthBytes, 0, lengthBytes.Length);
-        Array.Reverse(lengthBytes);
-        int screenHeight = BitConverter.ToInt32(lengthBytes, 0);
-        debugText.text += "\nRead height = : " + screenHeight.ToString() + "  Byte Data : " + BitConverter.ToString(lengthBytes);
-        
-        
-        byte[] textureRawData = new byte[textureLength];
-        
-        
+        DataStructs.mirroringData.screenHeight = BitConverter.ToInt32(lengthBytes, 0);
+
+        byte[] textureRawData = new byte[DataStructs.mirroringData.bytesLen];
+
         int readData = 0;
-        while (readData < textureLength)
+        while (readData < DataStructs.mirroringData.bytesLen)
         {
             readData += clientStream.Read(textureRawData, readData, textureRawData.Length - readData);
-            //debugText.text += "\nRead Texture Length : " + textureLength + "\nRead Image Counter : " + counter + "\nRead Data Length : " + readData;
         }
         
-        
-        debugText.text += "\nRead complete : " + readData.ToString();
-        debugText2.text = BitConverter.ToString(textureRawData);
-        
+        DataStructs.mirroringImageData = textureRawData;
+
         counter += 1;
         Debug.Log("Read Texture Length : " + readData);
-        byteToRawTexture.LoadPNG(textureRawData);
         clientStream.Flush();
+        currentFunctionUpdated = true;
     }
     
     
@@ -285,4 +282,6 @@ public class TCP_SERVER : MonoBehaviour
         clientStream.Flush();
     }
     
+
+    #endregion
 }

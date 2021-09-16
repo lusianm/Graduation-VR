@@ -4,6 +4,11 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using UnityEngine;
 
+public enum FunctionTypes
+{
+    PartialVideoSeeThrough = 1, Mirroring = 2, VRController = 3, LipMotion = 4
+}
+
 public class DataStructs
 {
     public struct partialTrackingStruct
@@ -27,6 +32,7 @@ public class DataStructs
     }
 
     public static mirroringStruct mirroringData = default;
+    public static byte[] mirroringImageData = default;
 
     public struct VRControllerStruct
     {

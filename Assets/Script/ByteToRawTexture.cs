@@ -7,6 +7,8 @@ public class ByteToRawTexture : MonoBehaviour
 {
     Texture2D tex;
     [SerializeField] List<RawImage> renders;
+
+    public Texture2D GetMobileImageTexture() => tex;
     public void Start()
     {
         //tex = new Texture2D(720, 480, TextureFormat.RGBA4444, false);
