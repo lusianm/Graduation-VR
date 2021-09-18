@@ -179,31 +179,12 @@ public class FingerTipUIManager : MonoBehaviour
                 }
             }
         }
-        else if (pinkyFingerUIActivateLimit != 0)
-        {
-            if ((Time.time < pinkyFingerUIActivateLimit) &&
-                !fingerTipUIHand.GetFingerIsPinching(OVRHand.HandFinger.Pinky))
-            {
-                tempPanel = mainPanel.ButtonAction(2);
-                middleFingerUIActivateLimit = 0f;
-
-                if (tempPanel != null)
-                {
-                    SetPanelToMain(tempPanel);
-                }
-                else
-                {
-                    Debug.Log("Deactivate5");
-                    DeactivateCanvas();
-                }
-            }
-        }
         else if (ringFingerUIActivateLimit != 0)
         {
             if ((Time.time < ringFingerUIActivateLimit) &&
                 !fingerTipUIHand.GetFingerIsPinching(OVRHand.HandFinger.Ring))
             {
-                tempPanel = mainPanel.ButtonAction(3);
+                tempPanel = mainPanel.ButtonAction(2);
                 ringFingerUIActivateLimit = 0f;
 
                 if (tempPanel != null)
@@ -213,6 +194,25 @@ public class FingerTipUIManager : MonoBehaviour
                 else
                 {
                     Debug.Log("Deactivate6");
+                    DeactivateCanvas();
+                }
+            }
+        }
+        else if (pinkyFingerUIActivateLimit != 0)
+        {
+            if ((Time.time < pinkyFingerUIActivateLimit) &&
+                !fingerTipUIHand.GetFingerIsPinching(OVRHand.HandFinger.Pinky))
+            {
+                tempPanel = mainPanel.ButtonAction(3);
+                middleFingerUIActivateLimit = 0f;
+
+                if (tempPanel != null)
+                {
+                    SetPanelToMain(tempPanel);
+                }
+                else
+                {
+                    Debug.Log("Deactivate5");
                     DeactivateCanvas();
                 }
             }
@@ -238,13 +238,13 @@ public class FingerTipUIManager : MonoBehaviour
         {
             middleFingerUIActivateLimit = Time.time + 0.5f;
         }
-        else if (fingerTipUIHand.GetFingerIsPinching(OVRHand.HandFinger.Pinky))
-        {
-            pinkyFingerUIActivateLimit = Time.time + 0.5f;
-        }
         else if (fingerTipUIHand.GetFingerIsPinching(OVRHand.HandFinger.Ring))
         {
             ringFingerUIActivateLimit = Time.time + 0.5f;
+        }
+        else if (fingerTipUIHand.GetFingerIsPinching(OVRHand.HandFinger.Pinky))
+        {
+            pinkyFingerUIActivateLimit = Time.time + 0.5f;
         }
                 
                 
@@ -255,10 +255,10 @@ public class FingerTipUIManager : MonoBehaviour
         else if (fingerTipUIHand.GetFingerPinchStrength(OVRHand.HandFinger.Middle) > 0.8f)
         {
         }
-        else if (fingerTipUIHand.GetFingerPinchStrength(OVRHand.HandFinger.Pinky) > 0.8f)
+        else if (fingerTipUIHand.GetFingerPinchStrength(OVRHand.HandFinger.Ring) > 0.8f)
         {
         }
-        else if (fingerTipUIHand.GetFingerPinchStrength(OVRHand.HandFinger.Ring) > 0.8f)
+        else if (fingerTipUIHand.GetFingerPinchStrength(OVRHand.HandFinger.Pinky) > 0.8f)
         {
         }
     }
