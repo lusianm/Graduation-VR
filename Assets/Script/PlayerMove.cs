@@ -13,6 +13,8 @@ public class PlayerMove : MonoBehaviour
     public float additionalHeight = 1f;
 
     public LayerMask groundLayer;
+
+    private int leftControllerState = 0;
     
     // Start is called before the first frame update
     void Start()
@@ -27,16 +29,64 @@ public class PlayerMove : MonoBehaviour
     void Update()
     {
         //joystickAxis[0] = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
-        joystickAxis[0] = InputSystem.GetAxis2D(ControllerType.RightController);
     }
 
     private void FixedUpdate()
     {
+        joystickAxis[0] = InputSystem.GetAxis2D(ControllerType.RightController);
+        joystickAxis[1] = InputSystem.GetAxis2D(ControllerType.LeftController);
         CharacterCapsuleHeightAddjust();
+        CharacterMove();
+    }
+
+    void CharacterMove()
+    {
         
         Quaternion headYaw = Quaternion.Euler(0, centerEyeAnchor.eulerAngles.y, 0);
-        Vector3 direction = headYaw * new Vector3(joystickAxis[0].x, 0f, joystickAxis[0].y);
-        character.Move(direction * (Time.fixedDeltaTime * moveSpeed));
+        //right joystick input
+        Vector3 rightMoveDirection = new Vector3(joystickAxis[0].x, 0f, joystickAxis[0].y);
+        Vector3 leftMoveDirection;
+        //left joystick input
+        if (Vector2.Dot(joystickAxis[1], Vector2.left) > 0.7f)
+        {
+            if (leftControllerState != 1)
+            {
+                transform.Rotate(0f, -30f, 0f);
+                leftControllerState = 1;
+            }
+
+            leftMoveDirection = Vector3.zero;
+        }
+        else if (Vector2.Dot(joystickAxis[1], Vector2.right) > 0.7f)
+        {
+            if (leftControllerState != 2)
+            {
+                transform.Rotate(0f, 30f, 0f);
+                leftControllerState = 2;
+            }
+
+            leftMoveDirection = Vector3.zero;
+        }
+        else
+        {
+            leftControllerState = 0;
+            Vector2 leftMoveVector;
+            if (joystickAxis[1].y > 0)
+            {
+                leftMoveVector = Vector2.up * Vector2.Dot(Vector2.up, joystickAxis[1]);
+            }
+            else
+            {
+                leftMoveVector = Vector2.down * Vector2.Dot(Vector2.down, joystickAxis[1]);
+            }
+            leftMoveDirection = new Vector3(leftMoveVector.x, 0f, leftMoveVector.y);
+        }
+
+        Vector3 moveDirection = headYaw * ( rightMoveDirection + leftMoveDirection );
+        
+        
+        
+        character.Move(moveDirection * (Time.fixedDeltaTime * moveSpeed));
         
         //gravity
         if (isGround())
@@ -46,15 +96,17 @@ public class PlayerMove : MonoBehaviour
             fallingSpeed += gravity * Time.fixedDeltaTime;
             character.Move(Vector3.up * (fallingSpeed * Time.fixedDeltaTime));
         }
+        
     }
 
-    public void CharacterCapsuleHeightAddjust()
+    void CharacterCapsuleHeightAddjust()
     {
         character.height = centerEyeAnchor.localPosition.y + additionalHeight;
         Vector3 capsuleCenter = transform.InverseTransformPoint(centerEyeAnchor.position);
         capsuleCenter.y = -(character.height/2 + character.skinWidth);
         character.center = capsuleCenter;
     }
+    
     bool isGround()
     {
         Vector3 rayStart = transform.TransformPoint(character.center);

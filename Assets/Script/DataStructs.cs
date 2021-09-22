@@ -6,7 +6,7 @@ using UnityEngine;
 
 public enum FunctionTypes
 {
-    PartialVideoSeeThrough = 1, Mirroring = 2, VRController = 3, LipMotion = 4
+    PartialVideoSeeThrough = 1, Mirroring = 2, VRController = 3, VRKeyboard = 4
 }
 
 public class DataStructs
@@ -18,7 +18,7 @@ public class DataStructs
         public bool isRight;
         public Vector2 cameraResolution;
         public Vector2 trackedPosition;
-        public Quaternion trackedRotation;
+        public Vector3 trackedRotation;
     }
 
     public static partialTrackingStruct partialTrackingData = default;
@@ -52,6 +52,36 @@ public class DataStructs
     }
     
     public static VRControllersStruct vrControllersData = default;
+    
+    
+    public struct VRKeyboardStruct
+    {
+        public int touchID;
+        public bool isPressed;
+        public Vector2 touchPosition;
+        public Vector2 screenResolution;
+    }
+
+    public static List<VRKeyboardStruct> vrKeyboardBuffor = new List<VRKeyboardStruct>();
+    
+    public static void UpdateTouchInfo(DataStructs.VRKeyboardStruct updateKeyboardInfo)
+    {
+        //기존에 data가 존재하면 data를 업데이트
+        if (vrKeyboardBuffor.Exists(info => info.touchID == updateKeyboardInfo.touchID))
+        {
+            for (int i = 0; i < vrKeyboardBuffor.Count; i++)
+            {
+                if (vrKeyboardBuffor[i].touchID == updateKeyboardInfo.touchID)
+                {
+                    vrKeyboardBuffor[i] = updateKeyboardInfo;
+                }
+            }
+        }
+        else
+        {
+            vrKeyboardBuffor.Add(updateKeyboardInfo);
+        }
+    }
     
     public static byte[] StructToBytes(object obj)
     {

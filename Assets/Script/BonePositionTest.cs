@@ -83,7 +83,7 @@ public class BonePositionTest : MonoBehaviour
                 canvasTransform.position = leftHandThumb3.position;
             }
             
-            canvasTransform.rotation = DataStructs.partialTrackingData.trackedRotation;
+            //canvasTransform.rotation = DataStructs.partialTrackingData.trackedRotation;
             canvasTransform.Rotate(0f, -195f, 180f, Space.Self);
             canvasTransform.Rotate(90f, 180f, -90f, Space.World);
         }
@@ -100,8 +100,7 @@ public class BonePositionTest : MonoBehaviour
             //canvasTransform.Rotate(0f, 0f, -90f, Space.Self);
             //canvasTransform.Rotate(canvasBaseRotation);
             canvasTransform.sizeDelta = new Vector2(canvasVector.magnitude, canvasVector.magnitude * 1 / 1);
-            
-            
+
         }
         
     }

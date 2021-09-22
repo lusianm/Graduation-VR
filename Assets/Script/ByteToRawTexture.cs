@@ -6,7 +6,6 @@ using UnityEngine.UI;
 public class ByteToRawTexture : MonoBehaviour
 {
     Texture2D tex;
-    [SerializeField] List<RawImage> renders;
 
     public Texture2D GetMobileImageTexture() => tex;
     public void Start()
@@ -15,22 +14,13 @@ public class ByteToRawTexture : MonoBehaviour
         tex = new Texture2D(720, 480, TextureFormat.RGBA32, false);
     }
 
-    public void setTexture(byte[] imageByte)
+    public void TextureResize(int width, int height, TextureFormat textureFormat = TextureFormat.RGBA32,
+        bool mipChain = false)
     {
-        if (imageByte.Length < 1)
-            return;
-
-        Debug.Log("Image Received");
-        byte[] decompressedByte = imageByte;
-        tex.LoadRawTextureData(decompressedByte);
-        tex.Apply();
-
-        foreach (RawImage render in renders)
-        {
-            render.material.mainTexture = tex;
-            render.texture = tex;
-        }
+        tex = new Texture2D(width, height, textureFormat, mipChain);
     }
+    
+    
     public void LoadPNG(byte[] pngByte)
     {
         if (pngByte.Length < 1)
@@ -39,10 +29,5 @@ public class ByteToRawTexture : MonoBehaviour
         Debug.Log("Png Received");
         tex.LoadImage(pngByte);
         tex.Apply();
-        foreach (RawImage render in renders)
-        {
-            render.material.mainTexture = tex;
-            render.texture = tex;
-        }
     }
 }

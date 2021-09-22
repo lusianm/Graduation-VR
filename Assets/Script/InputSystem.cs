@@ -27,6 +27,8 @@ public class InputSystem : MonoBehaviour
         
         isLandscapeMode = true;
     }
+    
+    
 
     void InitControllerData(DataStructs.VRControllerStruct data)
     {

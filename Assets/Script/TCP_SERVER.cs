@@ -11,12 +11,11 @@ using UnityEngine.UI;
 
 public class TCP_SERVER : MonoBehaviour
 {
-
+    private static TCP_SERVER instance = null;
 
     TcpListener serverSocket;
     TcpClient clientSocket;
     NetworkStream clientStream;
-    [SerializeField] BonePositionTest boneTest;
     [SerializeField] int counter = 0;
     [SerializeField] int port;
     [SerializeField] Text debugText;
@@ -32,11 +31,27 @@ public class TCP_SERVER : MonoBehaviour
 
     private int currentFunctionType;
     private bool currentFunctionUpdated;
-    
-    
+
+    public static TCP_SERVER GetInstance() => instance;
+
+
+    private void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+        }
+        else if (instance != this)
+        {
+            Destroy(this);
+        }
+    }
+
     // Start is called before the first frame update
     void Start()
     {
+        
+        
         serverSocket = new TcpListener(port);
         clientSocket = default(TcpClient);
         serverSocket.Start();
@@ -94,7 +109,6 @@ public class TCP_SERVER : MonoBehaviour
                 if (currentFunctionUpdated)
                 {
                     byteToRawTexture.LoadPNG(DataStructs.partialTrackingImageData);
-                    boneTest.SetTrackingData();
                     currentFunctionUpdated = false;
                 }
                 break;
@@ -110,6 +124,12 @@ public class TCP_SERVER : MonoBehaviour
                 }
                 break;
             case 3:
+                if (currentFunctionUpdated)
+                {
+                    currentFunctionUpdated = false;
+                }
+                break;
+            case 4:
                 if (currentFunctionUpdated)
                 {
                     currentFunctionUpdated = false;
@@ -170,6 +190,9 @@ public class TCP_SERVER : MonoBehaviour
         if ((int) changeFunctionType == currentFunctionType)
             return;
 
+        if (clientStream == null)
+            return;
+        
         byte[] functionTypeBytes = BitConverter.GetBytes((int) changeFunctionType);
         clientStream.Write(functionTypeBytes, 0, functionTypeBytes.Length);
         currentFunctionType = (int) changeFunctionType;
@@ -202,6 +225,9 @@ public class TCP_SERVER : MonoBehaviour
                         break;
                     case 3:
                         ReadFunctionC();
+                        break;
+                    case 4:
+                        ReadFunctionD();
                         break;
                 }
 
@@ -280,8 +306,26 @@ public class TCP_SERVER : MonoBehaviour
         Debug.Log("Read VRController Data");
 
         clientStream.Flush();
+        currentFunctionUpdated = true;
     }
     
+    void ReadFunctionD()
+    {
+        byte[] dataBytes = new byte[Marshal.SizeOf<DataStructs.VRKeyboardStruct>()];
+        clientStream.Read(dataBytes, 0, dataBytes.Length);
+        DataStructs.VRKeyboardStruct tempData = DataStructs.ByteToStruct<DataStructs.VRKeyboardStruct>(dataBytes);
+        DataStructs.UpdateTouchInfo(tempData);
+        counter += 1;
+        /*
+        Debug.Log("Read VRKeyboard Data Read");
+        foreach (DataStructs.VRKeyboardStruct testDebug in DataStructs.vrKeyboardBuffor)
+        {
+            Debug.Log("Data Sturct buffer : " + testDebug.touchID);
+        }
+        */
+        clientStream.Flush();
+        currentFunctionUpdated = true;
+    }
 
     #endregion
 }
