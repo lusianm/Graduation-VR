@@ -179,7 +179,7 @@ public class TCP_SERVER : MonoBehaviour
 
         if (clientStream == null)
             return;
-
+        clientStream.WriteTimeout = 1000;
         byte[] functionTypeBytes = BitConverter.GetBytes(changeFunctionType);
         clientStream.Write(functionTypeBytes, 0, functionTypeBytes.Length);
         currentFunctionType = changeFunctionType;
