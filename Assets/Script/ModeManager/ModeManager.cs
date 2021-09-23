@@ -21,8 +21,7 @@ public class ModeManager : MonoBehaviour
     {
         if (changeFunctionType == currentFunctionType)
             return;
-        
-        TCP_SERVER.GetInstance().ChangeMobileMode(changeFunctionType);
+        //TCP_SERVER.GetInstance().ChangeMobileMode(changeFunctionType);
         ModeChange(changeFunctionType);
     }
     
@@ -30,7 +29,7 @@ public class ModeManager : MonoBehaviour
     {
         if ((int)changeFunctionType == currentFunctionType)
             return;
-        TCP_SERVER.GetInstance().ChangeMobileMode(changeFunctionType);
+        //TCP_SERVER.GetInstance().ChangeMobileMode(changeFunctionType);
         ModeChange((int)changeFunctionType);
     }
 
