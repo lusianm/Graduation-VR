@@ -8,6 +8,7 @@ public class ModeManager : MonoBehaviour
     private int currentFunctionType;
     [SerializeField] private ByteToRawTexture byteToRawTexture;
     [SerializeField] private PartialVideoSeeThroughManager partialVideoSeeThroughManager;
+    [SerializeField] private MirroringManager mirroringManager;
     [SerializeField] private KeyboardManager keyboardManager;
 
     private void Start()
@@ -42,6 +43,7 @@ public class ModeManager : MonoBehaviour
                 partialVideoSeeThroughManager.closePartialVideoSeeThrough();
                 break;
             case 2:
+                mirroringManager.closeMirroringMode();
                 break;
             case 3:
                 break;
@@ -59,6 +61,7 @@ public class ModeManager : MonoBehaviour
                 partialVideoSeeThroughManager.SetMode(0, byteToRawTexture.GetMobileImageTexture());
                 break;
             case 2:
+                mirroringManager.SetMirroringMode(byteToRawTexture.GetMobileImageTexture());
                 break;
             case 3:
                 break;
