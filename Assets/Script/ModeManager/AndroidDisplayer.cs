@@ -18,8 +18,14 @@ public class AndroidDisplayer : MonoBehaviour
 
     public void ResetDispalyerSize(float width, float height, float paddingWidth, float paddingHeight)
     {
+        
         outlineRectTransform.sizeDelta = new Vector2(width, height);
         screenRectTransfrom.sizeDelta = new Vector2(height - paddingHeight, width - paddingWidth);
+    }
+    
+    public void ResetDispalyerSize(float width, float height)
+    {
+        outlineRectTransform.localScale = new Vector3(width, height, 1f);
     }
 
     public void ResetDisplayerPosition(float x, float y)

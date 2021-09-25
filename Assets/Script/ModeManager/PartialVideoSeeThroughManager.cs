@@ -14,7 +14,7 @@ public class PartialVideoSeeThroughManager : MonoBehaviour
     private bool isPhoneTracking;
     private Texture currentSetTexture;
     private bool isPartialVideoSeeThroughActivated;
-    [SerializeField] private Transform baseRotation;
+    [SerializeField] private Transform baseRotationParent,baseRotation;
     [SerializeField] private Transform forwardTransform;
     
     
@@ -70,7 +70,10 @@ public class PartialVideoSeeThroughManager : MonoBehaviour
         switch (currentMode)
         {
             case 0:
-
+                /*
+                uiAndroidDisplayer.ResetDispalyerSize(DataStructs.partialTrackingData.cameraResolution.y,
+                    DataStructs.partialTrackingData.cameraResolution.x);
+                */
                 break;
             case 1:
                 if (!rightHand.isActiveAndEnabled)
@@ -105,11 +108,17 @@ public class PartialVideoSeeThroughManager : MonoBehaviour
         if(!userHandCanvas.gameObject.activeSelf)
             userHandCanvas.gameObject.SetActive(true);
         
+        userHandCanvasRectTransform.sizeDelta = new Vector2(1f, 1f);
+        
         if (isPhoneTracking)
         {
+            userHandCanvasRectTransform.localScale = new Vector3(
+                DataStructs.partialTrackingData.cameraResolution.y / 4000f,
+                DataStructs.partialTrackingData.cameraResolution.x / 4000f, 0f);
             handAndroidDisplayer.gameObject.SetActive(false);
             handPhoneAndroidDisplayer.gameObject.SetActive(true);
             handPhoneAndroidDisplayer.SetDisplayTexture(currentSetTexture);
+            //handPhoneAndroidDisplayer.ResetDispalyerSize(DataStructs.partialTrackingData.cameraResolution.y/10000f,DataStructs.partialTrackingData.cameraResolution.x/10000f);
 
 
             SetHandPhoneCanvasPosition();
@@ -134,26 +143,37 @@ public class PartialVideoSeeThroughManager : MonoBehaviour
         userHandCanvasRectTransform.position = rightHandIndexTip.position + (canvasVector / 2);
             
         userHandCanvasRectTransform.LookAt(Camera.main.transform);
-        userHandCanvasRectTransform.sizeDelta = new Vector2(canvasVector.magnitude, canvasVector.magnitude * 1 / 1);
+        //userHandCanvasRectTransform.sizeDelta = new Vector2(canvasVector.magnitude, canvasVector.magnitude * 1 / 1);
+        userHandCanvasRectTransform.localScale = new Vector3(canvasVector.magnitude, canvasVector.magnitude, 0f);
         
     }
 
     private void SetHandPhoneCanvasPosition()
     {
+        
         userHandCanvasRectTransform.pivot = new Vector2(0.5f, 0.5f);
-        baseRotation.parent.eulerAngles = new Vector3(90f, 137.5f, 0f);
+        /*
+        baseRotationParent.eulerAngles = new Vector3(90f, 135f, 0f);
         baseRotation.localEulerAngles = DataStructs.partialTrackingData.trackedRotation;
         userHandCanvasRectTransform.eulerAngles = baseRotation.eulerAngles;
-
-
+        */
+        userHandCanvasRectTransform.rotation = rightHandThumb3.rotation;
+        userHandCanvasRectTransform.Rotate(90f, 0f, -90f);
+        
+        /*
+        baseRotation.localEulerAngles = new Vector3(0f, 0f, 0f);
+        baseRotationParent.rotation = rightHandThumbTip.rotation;
+        baseRotationParent.position = rightHandThumbTip.position;
+        */
         if (DataStructs.partialTrackingData.isRight)
         {
-            userHandCanvasRectTransform.pivot = new Vector2(1f, 0f);
+            userHandCanvasRectTransform.pivot = new Vector2(0.7f, 0.1f);
             userHandCanvasRectTransform.position = rightHandThumb3.position;
-        }
+
+        } 
         else
         {
-            userHandCanvasRectTransform.pivot = new Vector2(0f, 0f);
+            userHandCanvasRectTransform.pivot = new Vector2(0.3f, 0.1f);
             userHandCanvasRectTransform.position = leftHandThumb3.position;
         }
     }
@@ -169,8 +189,8 @@ public class PartialVideoSeeThroughManager : MonoBehaviour
                 if (currentMode == mode)
                 {
                     uiAndroidDisplayer.SetDisplayTexture(setTexture);
-                    uiAndroidDisplayer.ResetDispalyerSize(DataStructs.partialTrackingData.cameraResolution.x / 10f,
-                        DataStructs.partialTrackingData.cameraResolution.y / 10f, 3, 3);
+                    uiAndroidDisplayer.ResetDispalyerSize(DataStructs.partialTrackingData.cameraResolution.y,
+                        DataStructs.partialTrackingData.cameraResolution.x);
                     break;
                 }
 

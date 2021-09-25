@@ -16,6 +16,7 @@ public class InputSystem : MonoBehaviour
 {
     static private DataStructs.VRControllerStruct rightHandControllerData, leftHandControllerData;
     private static bool isLandscapeMode;
+    public static bool IsLandscapeMode() => isLandscapeMode;
     
     // Start is called before the first frame update
     void Start()
@@ -27,8 +28,6 @@ public class InputSystem : MonoBehaviour
         
         isLandscapeMode = true;
     }
-    
-    
 
     void InitControllerData(DataStructs.VRControllerStruct data)
     {
@@ -38,7 +37,8 @@ public class InputSystem : MonoBehaviour
         data.joysticAxis = Vector2.zero;
         data.deviceOrientation = DeviceOrientation.Unknown;
     }
-
+    
+    
     public static void SetControllerData(DataStructs.VRControllerStruct data)
     {
         if (data.controllerType == ControllerType.LeftController)

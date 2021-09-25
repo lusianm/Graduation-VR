@@ -19,8 +19,6 @@ public class MirroringManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (!isMirroringActivated)
-            return;
 
     }
 
@@ -29,9 +27,9 @@ public class MirroringManager : MonoBehaviour
         isMirroringActivated = true;
         currentSetTexture = setTexture;
         uiAndroidDisplayer.gameObject.SetActive(true);
-        uiAndroidDisplayer.ResetDispalyerSize(DataStructs.partialTrackingData.cameraResolution.x / 10f,
-            DataStructs.partialTrackingData.cameraResolution.y / 10f, 3, 3);
         uiAndroidDisplayer.SetDisplayTexture(setTexture);
+        uiAndroidDisplayer.ResetDispalyerSize(DataStructs.mirroringData.screenWidth * 0.6f,
+            DataStructs.mirroringData.screenHeight * 0.6f);
     }
     public void closeMirroringMode()
     {

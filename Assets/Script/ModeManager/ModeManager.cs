@@ -10,31 +10,39 @@ public class ModeManager : MonoBehaviour
     [SerializeField] private PartialVideoSeeThroughManager partialVideoSeeThroughManager;
     [SerializeField] private MirroringManager mirroringManager;
     [SerializeField] private KeyboardManager keyboardManager;
+    private bool isAndroidModeActivated;
+
+    public int GetCurrentModeMangerFunctionType() => currentFunctionType;
 
     private void Start()
     {
+        currentFunctionType = -1;
+        isAndroidModeActivated = false;
         partialVideoSeeThroughManager.closePartialVideoSeeThrough();
+        mirroringManager.closeMirroringMode();
         keyboardManager.CloseKeyboard();
     }
 
-    public void ChangeMobileMode(int changeFunctionType)
+    public void MobileModeChangeRequest(int changeFunctionType)
     {
+        isAndroidModeActivated = true;
         if (changeFunctionType == currentFunctionType)
             return;
         TCP_SERVER.GetInstance().ChangeMobileMode(changeFunctionType);
-        ModeChange(changeFunctionType);
     }
     
-    public void ChangeMobileMode(FunctionTypes changeFunctionType)
+    public void MobileModeChangeRequest(FunctionTypes changeFunctionType)
     {
+        isAndroidModeActivated = true;
         if ((int)changeFunctionType == currentFunctionType)
             return;
         TCP_SERVER.GetInstance().ChangeMobileMode(changeFunctionType);
-        ModeChange((int)changeFunctionType);
     }
 
-    private void ModeChange(int changeMode)
+    public void ModeChange(int changeMode)
     {
+        if (!isAndroidModeActivated)
+            return;
         //turn off current mode
         switch (currentFunctionType)
         {
@@ -69,6 +77,17 @@ public class ModeManager : MonoBehaviour
                 break;
                 
         }
+
+        currentFunctionType = changeMode;
+    }
+
+    public void TurnOffAndroidMode()
+    {
+        partialVideoSeeThroughManager.closePartialVideoSeeThrough();
+        mirroringManager.closeMirroringMode();
+        keyboardManager.CloseKeyboard();
+        
+        currentFunctionType = -1;
     }
 
     public void SetPartialVideoSeeThroughMode(int modeType = 0)

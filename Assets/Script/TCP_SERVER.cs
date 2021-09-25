@@ -20,6 +20,7 @@ public class TCP_SERVER : MonoBehaviour
     [SerializeField] int port;
     [SerializeField] Text debugText;
     [SerializeField] Text debugText2;
+    [SerializeField] ModeManager modeManager;
     bool isConnected = false;
     bool isDataReaded = false;
     string readData;
@@ -93,6 +94,11 @@ public class TCP_SERVER : MonoBehaviour
             acceptThread.Start();
             */
             return;
+        }
+
+        if (currentFunctionType != modeManager.GetCurrentModeMangerFunctionType())
+        {
+            modeManager.ModeChange(currentFunctionType);
         }
 
         debugText.text = "Read Function Type : " + currentFunctionType.ToString();
@@ -179,7 +185,7 @@ public class TCP_SERVER : MonoBehaviour
 
         if (clientStream == null)
             return;
-        clientStream.WriteTimeout = 1000;
+        clientStream.WriteTimeout = 500;
         byte[] functionTypeBytes = BitConverter.GetBytes(changeFunctionType);
         clientStream.Write(functionTypeBytes, 0, functionTypeBytes.Length);
         currentFunctionType = changeFunctionType;
@@ -193,6 +199,7 @@ public class TCP_SERVER : MonoBehaviour
         if (clientStream == null)
             return;
         
+        clientStream.WriteTimeout = 500;
         byte[] functionTypeBytes = BitConverter.GetBytes((int) changeFunctionType);
         clientStream.Write(functionTypeBytes, 0, functionTypeBytes.Length);
         currentFunctionType = (int) changeFunctionType;
