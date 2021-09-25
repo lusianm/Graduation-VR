@@ -261,7 +261,7 @@ public class TCP_SERVER : MonoBehaviour
         DataStructs.partialTrackingImageData = textureRawData;
         
         counter += 1;
-        Debug.Log("Read Texture Length : " + readDataLength.ToString());
+        //Debug.Log("Read Texture Length : " + readDataLength.ToString());
         
         clientStream.Flush();
         currentFunctionUpdated = true;
@@ -294,7 +294,7 @@ public class TCP_SERVER : MonoBehaviour
         DataStructs.mirroringImageData = textureRawData;
 
         counter += 1;
-        Debug.Log("Read Texture Length : " + readData);
+        //Debug.Log("Read Texture Length : " + readData);
         clientStream.Flush();
         currentFunctionUpdated = true;
     }
@@ -310,7 +310,7 @@ public class TCP_SERVER : MonoBehaviour
         InputSystem.SetControllerData(DataStructs.vrControllersData.leftController);
         
         counter += 1;
-        Debug.Log("Read VRController Data");
+        //Debug.Log("Read VRController Data");
 
         clientStream.Flush();
         currentFunctionUpdated = true;

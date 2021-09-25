@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,24 +7,34 @@ using UnityEngine.EventSystems;
 
 public class InteractableObject : MonoBehaviour
 {
-    private bool isGrabbable = false;
-    private bool isTriggerable = false;
+    [SerializeField] private bool isGrabbable = false;
+    [SerializeField] private bool isTriggerable = false;
     [SerializeField] private UnityEvent triggerEvent;
+    [SerializeField] private Material selectedMaterial;
+    private Material defaultMaterial;
+    [SerializeField] private GameObject highlightObject;
+    private MeshRenderer objectMeshRenderer;
     private Transform parentTranform;
     public bool IsGrabbable() => isGrabbable;
     public bool IsTriggerable() => isTriggerable;
-    
-    
+
+    private void Start()
+    {
+        objectMeshRenderer = highlightObject.GetComponent<MeshRenderer>();
+        defaultMaterial = objectMeshRenderer.material;
+    }
+
+
     // Start is called before the first frame update
 
     public void OnSelected()
     {
-        
+        objectMeshRenderer.material = selectedMaterial;
     }
     
     public void OffSelected()
     {
-        
+        objectMeshRenderer.material = defaultMaterial;
     }
 
     public void OnGrap()

@@ -29,6 +29,7 @@ public class PlayerMove : MonoBehaviour
     void Update()
     {
         //joystickAxis[0] = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, OVRInput.Controller.RTouch);
+        
     }
 
     private void FixedUpdate()
