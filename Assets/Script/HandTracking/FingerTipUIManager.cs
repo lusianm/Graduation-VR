@@ -72,9 +72,18 @@ public class FingerTipUIManager : MonoBehaviour
     // ReSharper disable Unity.PerformanceAnalysis
     void ActivateCanvas()
     {
-        fingerTipCanvas.SetActive(!fingerTipCanvas.activeSelf);
-        SetPanelToMain(rootPanel);
+        if (!fingerTipCanvas.activeSelf)
+        {
+            fingerTipCanvas.SetActive(true);
+            SetPanelToMain(rootPanel);
+        }
+        else
+        {
+            DeactivateCanvas();
+        }
     }
+
+    
 
     void DeactivateCanvas()
     {
@@ -103,6 +112,24 @@ public class FingerTipUIManager : MonoBehaviour
         mainPanel = newMainPanel;
         mainPanel.gameObject.SetActive(true);
         mainPanel.GetComponent<RectTransform>().position = mainPanelPosition.position;
+        for (int i = 0; i < 4; i++)
+        {
+            FingerTipUIPanel tempPanel = mainPanel.GetChildPanel(i);
+            if (tempPanel != null)
+                ResetCanvasPosition(tempPanel);
+        }
+        
+    }
+    
+    void ResetCanvasPosition(FingerTipUIPanel vanishingPanel)
+    {
+        VanishingPanel(vanishingPanel);
+        for (int i = 0; i < 4; i++)
+        {
+            FingerTipUIPanel tempPanel = vanishingPanel.GetChildPanel(i);
+            if (tempPanel != null)
+                ResetCanvasPosition(tempPanel);
+        }
     }
 
     void SetPanelToSub(FingerTipUIPanel newSubPanel)

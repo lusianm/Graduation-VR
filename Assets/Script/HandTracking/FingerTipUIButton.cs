@@ -23,7 +23,6 @@ public class FingerTipUIButton : MonoBehaviour
             childFingerTipUIPanel.SetParentPanel(currentFingerTipUIPanel);
             childFingerTipUIPanel.gameObject.SetActive(false);
         }
-
     }
 
     public FingerTipUIPanel ButtonAction()
@@ -33,4 +32,6 @@ public class FingerTipUIButton : MonoBehaviour
             childFingerTipUIPanel.gameObject.SetActive(true);
         return childFingerTipUIPanel;
     }
+
+    public FingerTipUIPanel GetChildFingerTipPanel() => childFingerTipUIPanel;
 }

@@ -37,4 +37,22 @@ public class FingerTipUIPanel : MonoBehaviour
 
         return buttonList[buttonNum + currentBaseButtonNum].ButtonAction();
     }
+
+    public FingerTipUIPanel GetChildPanel(int buttonNum)
+    {
+        if (buttonNum > 4)
+        {
+            Debug.LogError("Out of FingerTipUI Button Num Boundary");
+            return null;
+        }
+        
+        if (buttonNum + currentBaseButtonNum > buttonList.Count)
+        {
+            Debug.Log("It is Empty FingerTipUI Button");
+            return null;
+        }
+
+        return buttonList[buttonNum + currentBaseButtonNum].GetChildFingerTipPanel();
+        
+    }
 }
