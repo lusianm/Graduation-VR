@@ -73,7 +73,7 @@ public class ModeManager : MonoBehaviour
             case 3:
                 break;
             case 4:
-                keyboardManager.SetupKeyboard();
+                keyboardManager.SetupKeyboard(keyboardManager.GetCurrentMode());
                 break;
                 
         }
@@ -98,6 +98,11 @@ public class ModeManager : MonoBehaviour
     public void ClosePartialVideoSeeThrough()
     {
         partialVideoSeeThroughManager.closePartialVideoSeeThrough();
+    }
+
+    public void SetKeyboardMode(int modeType = 0)
+    {
+        keyboardManager.SetupKeyboard(modeType);
     }
     
 }

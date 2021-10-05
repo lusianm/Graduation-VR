@@ -67,7 +67,7 @@ public class TCP_SERVER : MonoBehaviour
         {
             if(ip.AddressFamily == AddressFamily.InterNetwork)
                 if (debugText.text.CompareTo("Client Connected") != 0)
-                    debugText.text = "wating" + "\nIP is : " + ip.ToString();
+                    debugText.text = "wating" + "\n\nIP is : " + ip.ToString();
         }
 
         currentFunctionType = 0;
@@ -130,12 +130,22 @@ public class TCP_SERVER : MonoBehaviour
                 }
                 break;
             case 3:
+                debugText.text += "\nTrigger Pressed : " + InputSystem.GetButton(ButtonType.Trigger, ControllerType.LeftController).ToString() +
+                                  "\nGrip Pressed : " + InputSystem.GetButton(ButtonType.Grip, ControllerType.LeftController).ToString() +
+                                  "\nButton A Pressed : " + InputSystem.GetButton(ButtonType.ButtonA, ControllerType.RightController).ToString() +
+                                  "\nButton B Pressed : " + InputSystem.GetButton(ButtonType.ButtonB, ControllerType.RightController).ToString() +
+                                  "\nright Joystick Axis : " + InputSystem.GetAxis2D(ControllerType.RightController).ToString() +
+                                  "\nleft Joystick Axis : " + InputSystem.GetAxis2D(ControllerType.LeftController).ToString();
                 if (currentFunctionUpdated)
                 {
                     currentFunctionUpdated = false;
                 }
                 break;
             case 4:
+                foreach (DataStructs.VRKeyboardStruct keyBoardInfo in DataStructs.vrKeyboardBuffor)
+                {
+                    debugText.text += "\nTouch ID : " + keyBoardInfo.touchID.ToString() + ",  Touch Position : " + keyBoardInfo.touchPosition.ToString();
+                }
                 if (currentFunctionUpdated)
                 {
                     currentFunctionUpdated = false;

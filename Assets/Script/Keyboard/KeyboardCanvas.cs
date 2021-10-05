@@ -17,7 +17,13 @@ public class KeyboardCanvas : MonoBehaviour
     [SerializeField] private Transform keyboardPlane;
     [SerializeField] private Transform keyboardTempPointer;
     [SerializeField] private Transform pointersParent;
-    private bool isCanvasReady = true;
+    [SerializeField] private List<Transform> adjustPointsTransforms;
+    [SerializeField] private OVRSkeleton rightHand;
+    private Transform rightHandIndexTip;
+    
+    private bool isCanvasAdjusting = true;
+    private int currentAdjustPoint;
+    private Vector3[] adjustPosition;
     
 
     private string inputText = "";
@@ -26,15 +32,28 @@ public class KeyboardCanvas : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        foreach (Transform point in adjustPointsTransforms)
+        {
+            point.gameObject.SetActive(false);
+        }
         
+        currentAdjustPoint = -1;
+        adjustPosition = new Vector3[3];
+        isCanvasAdjusting = false;
+        
+        
+        for (int i = 0; i < rightHand.Bones.Count; i++)
+        {
+            if (rightHand.Bones[i].Id == OVRSkeleton.BoneId.Hand_IndexTip)
+            {
+                rightHandIndexTip = rightHand.Bones[i].Transform;
+            }
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (!isCanvasReady)
-            return;
-        
         _textMeshPro.text = inputText;
         
         if (DataStructs.vrKeyboardBuffor.Count == 0)
@@ -72,11 +91,48 @@ public class KeyboardCanvas : MonoBehaviour
         }
         else
         {
+            if (isCanvasAdjusting)
+            {
+                adjustPosition[currentAdjustPoint] = rightHandIndexTip.position;
+                adjustPointsTransforms[currentAdjustPoint].gameObject.SetActive(false);
+                currentAdjustPoint++;
+                if (currentAdjustPoint < 3)
+                {
+                    adjustPointsTransforms[currentAdjustPoint].gameObject.SetActive(true);
+                }
+                else
+                {
+                    ApplyKeyboardAdjustData();
+                }
+
+            }
+            
+            
             if (tempPointer.gameObject.activeSelf)
             {
                 tempPointer.GetComponent<KeyboardCursor>().PointerUp();
             }
         }
+    }
+
+    public void SetKeyboardAdjusting()
+    {
+        isCanvasAdjusting = true;
+        currentAdjustPoint = 0;
+        adjustPointsTransforms[currentAdjustPoint].gameObject.SetActive(true);
+    }
+
+    private void ApplyKeyboardAdjustData()
+    {
+        inputText = "";
+        Vector3 line12 = adjustPosition[0] - adjustPosition[1];
+        Vector3 line23 = adjustPosition[2] - adjustPosition[1];
+        transform.localScale = new Vector3(line12.magnitude, (line12.magnitude+line23.magnitude)/2, line23.magnitude * 2);
+        transform.up = Vector3.Cross(line23, line12);
+        transform.right = -line12;
+        transform.position = (adjustPosition[0] + adjustPosition[2]) / 2;
+
+        isCanvasAdjusting = false;
     }
 
 

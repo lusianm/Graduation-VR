@@ -11,6 +11,7 @@ public class KeyboardManager : MonoBehaviour
     [SerializeField] private Transform player;
     private Vector2[] keyboardTouchBound;
 
+    public int GetCurrentMode() => currentKeybaordMode;
     // Start is called before the first frame update
     void Start()
     {
@@ -45,6 +46,14 @@ public class KeyboardManager : MonoBehaviour
                 keyboardCanvas.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
                 break;
             case 1:
+                keyboardCanvas.transform.SetParent(null);
+                keyboardCanvas.transform.position = player.position;
+                keyboardCanvas.transform.rotation = player.rotation;
+                keyboardCanvas.transform.Translate(0f, -0.2f, 0.5f, Space.Self);
+                keyboardCanvas.transform.Rotate(-50f,0f,0f);
+                keyboardCanvas.transform.localScale = new Vector3(0.3f, 0.3f, 0.3f);
+                
+                keyboardCanvas.SetKeyboardAdjusting();
                 break;
         }
     }

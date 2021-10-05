@@ -28,8 +28,9 @@ public class MirroringManager : MonoBehaviour
         currentSetTexture = setTexture;
         uiAndroidDisplayer.gameObject.SetActive(true);
         uiAndroidDisplayer.SetDisplayTexture(setTexture);
-        uiAndroidDisplayer.ResetDispalyerSize(DataStructs.mirroringData.screenWidth * 0.6f,
-            DataStructs.mirroringData.screenHeight * 0.6f);
+        uiAndroidDisplayer.ResetDispalyerSize(DataStructs.mirroringData.screenWidth/5f,
+            DataStructs.mirroringData.screenHeight/5f, 0f, 0f);
+        //uiAndroidDisplayer.ResetDispalyerSize(1f,1f);
     }
     public void closeMirroringMode()
     {

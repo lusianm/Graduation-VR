@@ -23,6 +23,7 @@ public class FingerTipUIManager : MonoBehaviour
     private float middleFingerUIActivateLimit = 0f;
     private float pinkyFingerUIActivateLimit = 0f;
     private float ringFingerUIActivateLimit = 0f;
+    private float touchDelay = 0f;
     
     
     // Start is called before the first frame update
@@ -31,6 +32,7 @@ public class FingerTipUIManager : MonoBehaviour
         mainCamera = Camera.main;
         fingerTipUIActivateLimit = 0f;
         fingerTipCanvasRectTransform = fingerTipCanvas.GetComponent<RectTransform>();
+        touchDelay = 0f;
         DeactivateCanvas();
     }
 
@@ -155,6 +157,9 @@ public class FingerTipUIManager : MonoBehaviour
     {
         if (!fingerTipCanvas.activeSelf)
             return;
+
+        if (Time.time < touchDelay)
+            return;
         
         if ((Time.time < fingerTipUIActivateLimit) &&
             !fingerTipUIHand.GetFingerIsPinching(OVRHand.HandFinger.Index) &&
@@ -179,6 +184,8 @@ public class FingerTipUIManager : MonoBehaviour
                 if (tempPanel != null)
                 {
                     SetPanelToMain(tempPanel);
+
+                    touchDelay = Time.time + 0.5f;
                 }
                 else
                 {
@@ -198,6 +205,8 @@ public class FingerTipUIManager : MonoBehaviour
                 if (tempPanel != null)
                 {
                     SetPanelToMain(tempPanel);
+
+                    touchDelay = Time.time + 0.5f;
                 }
                 else
                 {
@@ -217,6 +226,8 @@ public class FingerTipUIManager : MonoBehaviour
                 if (tempPanel != null)
                 {
                     SetPanelToMain(tempPanel);
+
+                    touchDelay = Time.time + 0.5f;
                 }
                 else
                 {
@@ -236,6 +247,8 @@ public class FingerTipUIManager : MonoBehaviour
                 if (tempPanel != null)
                 {
                     SetPanelToMain(tempPanel);
+
+                    touchDelay = Time.time + 0.5f;
                 }
                 else
                 {

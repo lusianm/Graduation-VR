@@ -157,8 +157,6 @@ public class PartialVideoSeeThroughManager : MonoBehaviour
         baseRotation.localEulerAngles = DataStructs.partialTrackingData.trackedRotation;
         userHandCanvasRectTransform.eulerAngles = baseRotation.eulerAngles;
         */
-        userHandCanvasRectTransform.rotation = rightHandThumb3.rotation;
-        userHandCanvasRectTransform.Rotate(90f, 0f, -90f);
         
         /*
         baseRotation.localEulerAngles = new Vector3(0f, 0f, 0f);
@@ -167,12 +165,16 @@ public class PartialVideoSeeThroughManager : MonoBehaviour
         */
         if (DataStructs.partialTrackingData.isRight)
         {
+            userHandCanvasRectTransform.rotation = rightHandThumb3.rotation;
+            userHandCanvasRectTransform.Rotate(90f, 0f, -90f);
             userHandCanvasRectTransform.pivot = new Vector2(0.7f, 0.1f);
             userHandCanvasRectTransform.position = rightHandThumb3.position;
 
         } 
         else
         {
+            userHandCanvasRectTransform.rotation = leftHandThumb3.rotation;
+            userHandCanvasRectTransform.Rotate(90f, 0f, 90f);
             userHandCanvasRectTransform.pivot = new Vector2(0.3f, 0.1f);
             userHandCanvasRectTransform.position = leftHandThumb3.position;
         }
